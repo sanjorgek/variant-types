@@ -20,16 +20,24 @@ build-type:          Simple
 extra-source-files:  ChangeLog.md, README.md
 cabal-version:       >=1.10
 
+source-repository head
+  type:                git
+  location:            git@github.com:sanjorgek/turingMachine.git
 
 library
   -- Modules exported by the library.
-  -- exposed-modules:
+  exposed-modules:     Test.QuickCheck.Variant.Types
   -- Modules included in this library but not exported.
   -- other-modules:
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.9 && <4.10
+  build-depends:       base >=4.6 && <5
+                       , containers  
+                       , QuickCheck
+                       , QuickCheckVariant ==0.2.0.0
+                       , hspec >=2.2 && <3
+                       , hspecVariant ==0.1.0.1
   -- Directories containing source files.
   hs-source-dirs:      src
   -- Base language which the package is written in.
