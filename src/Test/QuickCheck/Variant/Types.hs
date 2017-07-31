@@ -9,7 +9,7 @@ Maintainer  : sanjorgek@ciencias.unam.mx
 Stability   : experimental
 Portability : portable
 
-Map implementation, represent a partial function
+Variant types,
 -}
 module Test.QuickCheck.Variant.Types where
 
@@ -21,12 +21,24 @@ import           Test.Hspec.Variant
 import           Test.QuickCheck
 import           Test.QuickCheck.Variant
 
+{-|
+Auxiliar generator
+-}
+selectOneOf :: [a] -> Gen a
 selectOneOf = oneof . map return
 
+{-|
+Variant Void
+-}
 instance Variant () where
   invalid = return ()
   valid = return ()
 
+{-|
+Variant maybe
+
+Nothing can't be invalid.
+-}
 instance (Variant a) => Variant (Maybe a) where
   valid = do
     x <- valid
@@ -35,6 +47,11 @@ instance (Variant a) => Variant (Maybe a) where
     y <- invalid
     return $ Just y
 
+{-|
+Varaint array/list
+
+Empty can't be invalid
+-}
 instance (Variant a) => Variant [a] where
   valid = do
     x <- valid
@@ -47,6 +64,9 @@ instance (Variant a) => Variant [a] where
     ys <- valid
     selectOneOf [[x], x:xs, x:ys, y:xs]
 
+{-|
+Variant either
+-}
 instance (Variant a, Variant b) => Variant (Either a b) where
   invalid = do
     x <- invalid
@@ -57,6 +77,11 @@ instance (Variant a, Variant b) => Variant (Either a b) where
     y <- valid
     selectOneOf [Left x, Right y]
 
+{-|
+Variant 2-tuple
+
+Cambine invalid data.
+-}
 instance (Variant a, Variant b) => Variant (a, b) where
   invalid = do
     x <- invalid
@@ -69,6 +94,11 @@ instance (Variant a, Variant b) => Variant (a, b) where
     y <- valid
     return (x, y)
 
+{-|
+Variant 3-tuple
+
+Cambine invalid data.
+-}
 instance (Variant a, Variant b, Variant c) => Variant (a, b, c) where
   invalid = do
     a <- invalid
@@ -84,6 +114,11 @@ instance (Variant a, Variant b, Variant c) => Variant (a, b, c) where
     c <- valid
     return (a,b,c)
 
+{-|
+Variant set
+
+Empty set can't be invalid
+-}
 instance (Ord a, Variant a) => Variant (Set.Set a) where
   invalid = do
     xs <- invalid
@@ -92,6 +127,11 @@ instance (Ord a, Variant a) => Variant (Set.Set a) where
     xs <- valid
     selectOneOf [Set.empty, Set.fromList xs]
 
+{-|
+Variant map
+
+Empty map can't be invalid
+-}
 instance (Ord k, Variant k, Variant a) => Variant (Map.Map k a) where
   invalid = do
     xs <- invalid
